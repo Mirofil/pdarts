@@ -249,7 +249,7 @@ def main():
                 args.learning_rate,
                 momentum=args.momentum,
                 weight_decay=args.weight_decay)
-        optimizer_a = torch.optim.Adam(model.module.arch_parameters(),
+        optimizer_a = torch.optim.Adam(model.arch_parameters(),
                     lr=args.arch_learning_rate, betas=(0.5, 0.999), weight_decay=args.arch_weight_decay)
         scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
                 optimizer, float(args.epochs), eta_min=args.learning_rate_min)
@@ -264,14 +264,14 @@ def main():
             epoch_start = time.time()
             # training
             if epoch < eps_no_arch:
-                model.module.p = float(drop_rate[sp]) * (epochs - epoch - 1) / epochs
-                model.module.update_p()
+                model.p = float(drop_rate[sp]) * (epochs - epoch - 1) / epochs
+                model.update_p()
                 # network_params doesnt do anything in my version of train, but it should be used for grad clipping
                 train_acc, train_obj = train_higher(train_queue=train_queue, valid_queue=valid_queue, network=model, network_params=network_params, 
                                                     criterion=criterion, w_optimizer=optimizer, a_optimizer=optimizer_a, args=args)
             else:
-                model.module.p = float(drop_rate[sp]) * np.exp(-(epoch - eps_no_arch) * scale_factor) 
-                model.module.update_p()                
+                model.p = float(drop_rate[sp]) * np.exp(-(epoch - eps_no_arch) * scale_factor) 
+                model.update_p()                
                 train_acc, train_obj = train_higher(train_queue=train_queue, valid_queue=valid_queue, network=model, network_params=network_params, 
                                                     criterion=criterion, w_optimizer=optimizer, a_optimizer=optimizer_a, args=args)            
             logging.info('Train_acc %f', train_acc)
@@ -318,7 +318,7 @@ def main():
             switches_normal_2 = copy.deepcopy(switches_normal)
             switches_reduce_2 = copy.deepcopy(switches_reduce)
         # drop operations with low architecture weights
-        arch_param = model.module.arch_parameters()
+        arch_param = model.arch_parameters()
         normal_prob = F.softmax(arch_param[0], dim=sm_dim).data.cpu().numpy()        
         for i in range(14):
             idxs = []
@@ -350,7 +350,7 @@ def main():
         logging_switches(switches_reduce)
         
         if sp == len(num_to_keep) - 1:
-            arch_param = model.module.arch_parameters()
+            arch_param = model.arch_parameters()
             normal_prob = F.softmax(arch_param[0], dim=sm_dim).data.cpu().numpy()
             reduce_prob = F.softmax(arch_param[1], dim=sm_dim).data.cpu().numpy()
             normal_final = [0 for idx in range(14)]
@@ -435,7 +435,7 @@ def train(train_queue, valid_queue, model, network_params, criterion, optimizer,
             logits = model(input_search)
             loss_a = criterion(logits, target_search)
             loss_a.backward()
-            nn.utils.clip_grad_norm_(model.module.arch_parameters(), args.grad_clip)
+            nn.utils.clip_grad_norm_(model.arch_parameters(), args.grad_clip)
             optimizer_a.step()
 
         optimizer.zero_grad()
