@@ -2,6 +2,11 @@ from collections import namedtuple
 
 Genotype = namedtuple('Genotype', 'normal normal_concat reduce reduce_concat')
 
+def count_ops(genotype):
+  genotype = str(genotype)
+  counts = {op: genotype.count(op) for op in PRIMITIVES}
+  return counts
+
 PRIMITIVES = [
     'none',
     'max_pool_3x3',
