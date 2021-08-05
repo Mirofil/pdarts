@@ -95,6 +95,7 @@ logging.basicConfig(stream=sys.stdout, level=logging.INFO,
 fh = logging.FileHandler(os.path.join(args.save, 'log.txt'))
 fh.setFormatter(logging.Formatter(log_format))
 logging.getLogger().addHandler(fh)
+logger = logging.getLogger()
 
 if args.cifar100:
     CIFAR_CLASSES = 100
