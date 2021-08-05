@@ -1,4 +1,4 @@
-#python train_search_no_higher.py --save log_path --add_layers 6 --add_layers 12 --dropout_rate 0.0 --dropout_rate 0.0 --dropout_rate 0.0
+# python train_search_no_higher.py --save log_path --add_layers 6 --add_layers 12 --dropout_rate 0.0 --dropout_rate 0.0 --dropout_rate 0.0
 
 import os
 import sys
@@ -269,12 +269,12 @@ def main():
                 model.module.update_p()
                 # network_params doesnt do anything in my version of train, but it should be used for grad clipping
                 train_acc, train_obj = train_higher(train_queue=train_queue, valid_queue=valid_queue, network=model, network_params=network_params, 
-                                                    criterion=criterion, w_optimizer=optimizer, a_optimizer=optimizer_a)
+                                                    criterion=criterion, w_optimizer=optimizer, a_optimizer=optimizer_a, args=args)
             else:
                 model.module.p = float(drop_rate[sp]) * np.exp(-(epoch - eps_no_arch) * scale_factor) 
                 model.module.update_p()                
                 train_acc, train_obj = train_higher(train_queue=train_queue, valid_queue=valid_queue, network=model, network_params=network_params, 
-                                                    criterion=criterion, w_optimizer=optimizer, a_optimizer=optimizer_a)            
+                                                    criterion=criterion, w_optimizer=optimizer, a_optimizer=optimizer_a, args=args)            
             logging.info('Train_acc %f', train_acc)
             
             epoch_duration = time.time() - epoch_start
