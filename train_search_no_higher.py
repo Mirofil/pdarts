@@ -238,7 +238,6 @@ def main():
     all_logs = []
     for sp in range(len(num_to_keep)):
         model = Network(args.init_channels + int(add_width[sp]), CIFAR_CLASSES, args.layers + int(add_layers[sp]), criterion, switches_normal=switches_normal, switches_reduce=switches_reduce, p=float(drop_rate[sp]))
-        model = nn.DataParallel(model)
         model = model.cuda()
         logging.info("param size = %fMB", utils.count_parameters_in_MB(model))
         network_params = []
