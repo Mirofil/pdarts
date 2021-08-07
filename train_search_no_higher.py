@@ -280,10 +280,9 @@ def main():
             epoch_duration = time.time() - epoch_start
             logging.info('Epoch time: %ds', epoch_duration)
             # validation
-            if epochs - epoch < 5:
-                valid_acc, valid_obj = infer(valid_queue, model, criterion)
-                logging.info('Valid_acc %f', valid_acc)
-                
+            valid_acc, valid_obj = infer(valid_queue, model, criterion)
+            logging.info('Valid_acc %f', valid_acc)
+            
             genotype = parse_network(switches_normal, switches_reduce)
             logging.info(genotype)
             try:
@@ -467,21 +466,24 @@ def infer(valid_queue, model, criterion):
     top5 = utils.AvgrageMeter()
     model.eval()
 
-    for step, (input, target) in enumerate(valid_queue):
-        input = input.cuda()
-        target = target.cuda(non_blocking=True)
-        with torch.no_grad():
-            logits = model(input)
-            loss = criterion(logits, target)
+    with torch.no_grad():
+        for step, (input, target) in enumerate(valid_queue):
+            if step > 100:
+                break
+            input = input.cuda()
+            target = target.cuda(non_blocking=True)
+            with torch.no_grad():
+                logits = model(input)
+                loss = criterion(logits, target)
 
-        prec1, prec5 = utils.accuracy(logits, target, topk=(1, 5))
-        n = input.size(0)
-        objs.update(loss.data.item(), n)
-        top1.update(prec1.data.item(), n)
-        top5.update(prec5.data.item(), n)
+            prec1, prec5 = utils.accuracy(logits, target, topk=(1, 5))
+            n = input.size(0)
+            objs.update(loss.data.item(), n)
+            top1.update(prec1.data.item(), n)
+            top5.update(prec5.data.item(), n)
 
-        if step % args.report_freq == 0:
-            logging.info('valid %03d %e %f %f', step, objs.avg, top1.avg, top5.avg)
+            if step % args.report_freq == 0:
+                logging.info('valid %03d %e %f %f', step, objs.avg, top1.avg, top5.avg)
 
     return top1.avg, objs.avg
 
