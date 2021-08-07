@@ -286,7 +286,10 @@ def main():
                 
             genotype = parse_network(switches_normal, switches_reduce)
             logging.info(genotype)
-            genotype_perf = api.predict(config=genotype, representation='genotype', with_noise=False)
+            try:
+                genotype_perf = api.predict(config=genotype, representation='genotype', with_noise=False)
+            except:
+                genotype_perf = -1
             ops_count = count_ops(genotype)
             width = {k:genotype_width(g) for k, g in [("normal", genotype.normal), ("reduce", genotype.reduce)]}
             depth = {k:genotype_depth(g) for k, g in [("normal", genotype.normal), ("reduce", genotype.reduce)]}
