@@ -4,7 +4,7 @@ import torch
 import shutil
 import torchvision.transforms as transforms
 from torch.autograd import Variable
-
+from collections import defaultdict, namedtuple
 
 class AvgrageMeter(object):
 
