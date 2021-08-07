@@ -47,7 +47,7 @@ parser.add_argument('--cifar100', action='store_true', default=False, help='sear
 
 args = parser.parse_args()
 
-args.save = '{}search-{}-{}'.format(args.save, args.note, time.strftime("%Y%m%d-%H%M%S"))
+args.save = '{}search-{}-{}'.format(args.save, args.note, args.seed)
 utils.create_exp_dir(args.save, scripts_to_save=glob.glob('*.py'))
 
 log_format = '%(asctime)s %(message)s'
