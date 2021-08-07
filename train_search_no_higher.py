@@ -54,9 +54,9 @@ parser.add_argument('--train_portion', type=float, default=0.5, help='portion of
 parser.add_argument('--arch_weight_decay', type=float, default=1e-3, help='weight decay for arch encoding')
 parser.add_argument('--tmp_data_dir', type=str, default='tmp/cache/', help='temp data dir')
 parser.add_argument('--note', type=str, default='try', help='note for this run')
-parser.add_argument('--dropout_rate', action='append', default=[], help='dropout rate of skip connect')
+parser.add_argument('--dropout_rate', action='append', default=[0.0, 0.0, 0.0], help='dropout rate of skip connect')
 parser.add_argument('--add_width', action='append', default=['0'], help='add channels')
-parser.add_argument('--add_layers', action='append', default=['0'], help='add layers')
+parser.add_argument('--add_layers', action='append', default=['0', 6, 12], help='add layers')
 parser.add_argument('--cifar100', action='store_true', default=False, help='search with cifar100 dataset')
 
 
